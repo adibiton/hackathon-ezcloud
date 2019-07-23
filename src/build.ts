@@ -13,7 +13,6 @@ const registryLogin = "d704cfe9-f9ab-4cb8-9802-f1388698aa7c";
 const registryPassword = "750ba20f-db41-412c-ae30-c807e7c9ba4f";
 const repoUrl = "https://github.com/asafst/EzCloud";
 const connectedServiceId = "8025ecf4-04d9-45c6-8645-d0d2875f8858"
-const userGithubToken = "de407c6490af9f36342c2d36c32867695c808cce";
 const userAzureDevOpsToken = "5d2tey3pxz6m4ydlguavlmkcdkpmcuihexabnsbtoisdbbcmigea";
 
 const buildDefinitionName = "EzCloud-CI-Automation";
