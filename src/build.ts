@@ -11,6 +11,7 @@ const projectName = "EzCloud";
 export async function run() {
     try
     {
+        console.log("starting");
         let vsts: vm.WebApi = await cm.getWebApi(organizationName);
         let vstsBuild: ba.IBuildApi = await vsts.getBuildApi();
 
@@ -78,7 +79,7 @@ export async function run() {
             name: projectName
         };
         newDef.queue = lastDef.queue;
-        newDef.type = lastDef.type;
+        newDef.type = 2;
 
         let process: bi.YamlProcess = {
             type: 2,

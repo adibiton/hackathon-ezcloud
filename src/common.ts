@@ -10,8 +10,8 @@ function getEnv(name: string): string {
     return val;
 }
 
-export async function getWebApi(serverUrl?: string): Promise<vm.WebApi> {
-    serverUrl = serverUrl || "https://dev.azure.com/AviramEzCloud"; //getEnv("API_URL");
+export async function getWebApi(organizationName?: string): Promise<vm.WebApi> {
+    let serverUrl = `https://dev.azure.com/${organizationName}`; //getEnv("API_URL");
     return await this.getApi(serverUrl);
 }
 
