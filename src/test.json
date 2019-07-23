@@ -1,0 +1,156 @@
+{
+    "options": [
+        {
+            "enabled": false,
+            "definition": {
+                "id": "5d58cc01-7c75-450c-be18-a388ddb129ec"
+            },
+            "inputs": {
+                "branchFilters": "[\"+refs/heads/*\"]",
+                "additionalFields": "{}"
+            }
+        },
+        {
+            "enabled": false,
+            "definition": {
+                "id": "a9db38f9-9fdc-478c-b0f9-464221e58316"
+            },
+            "inputs": {
+                "workItemType": "Bug",
+                "assignToRequestor": "true",
+                "additionalFields": "{}"
+            }
+        }
+    ],
+    "triggers": [
+        {
+            "branchFilters": [],
+            "pathFilters": [],
+            "settingsSourceType": 2,
+            "batchChanges": false,
+            "maxConcurrentBuildsPerBranch": 1,
+            "triggerType": 2
+        }
+    ],
+    "variables": {
+        "system.debug": {
+            "value": "false",
+            "allowOverride": true
+        },
+        "registryName": {
+            "value": "ezcloud"
+        },
+        "registryLogin": {
+            "value": "d704cfe9-f9ab-4cb8-9802-f1388698aa7c"
+        },
+        "registryPassword": {
+            "value": "750ba20f-db41-412c-ae30-c807e7c9ba4f"
+        }
+    },
+    "retentionRules": [
+        {
+            "branches": [
+                "+refs/heads/*"
+            ],
+            "artifacts": [],
+            "artifactTypesToDelete": [
+                "FilePath",
+                "SymbolStore"
+            ],
+            "daysToKeep": 10,
+            "minimumToKeep": 1,
+            "deleteBuildRecord": true,
+            "deleteTestResults": true
+        }
+    ],
+    "properties": {},
+    "tags": [],
+    "_links": {
+        "self": {
+            "href": "https://dev.azure.com/AviramEzCloud/7f9a3258-c003-4c71-a8a6-5a1e45e7b8b1/_apis/build/Definitions/1?revision=1"
+        },
+        "web": {
+            "href": "https://dev.azure.com/AviramEzCloud/7f9a3258-c003-4c71-a8a6-5a1e45e7b8b1/_build/definition?definitionId=1"
+        },
+        "editor": {
+            "href": "https://dev.azure.com/AviramEzCloud/7f9a3258-c003-4c71-a8a6-5a1e45e7b8b1/_build/designer?id=1&_a=edit-build-definition"
+        },
+        "badge": {
+            "href": "https://dev.azure.com/AviramEzCloud/7f9a3258-c003-4c71-a8a6-5a1e45e7b8b1/_apis/build/status/1"
+        }
+    },
+    "jobAuthorizationScope": 1,
+    "jobTimeoutInMinutes": 60,
+    "jobCancelTimeoutInMinutes": 5,
+    "process": {
+        "yamlFilename": "azure-build-pipeline.yml",
+        "type": 2
+    },
+    "repository": {
+        "properties": {
+            "cleanOptions": "0",
+            "labelSources": "0",
+            "labelSourcesFormat": "$(build.buildNumber)",
+            "reportBuildStatus": "true",
+            "gitLfsSupport": "false",
+            "skipSyncSource": "false",
+            "checkoutNestedSubmodules": "false",
+            "fetchDepth": "0"
+        },
+        "id": "ca1154e0-11eb-4a84-9fc9-74f98c5e8084",
+        "type": "TfsGit",
+        "name": "EzCloud",
+        "url": "https://dev.azure.com/AviramEzCloud/EzCloud/_git/EzCloud",
+        "defaultBranch": "refs/heads/master",
+        "clean": "false",
+        "checkoutSubmodules": false
+    },
+    "quality": 1,
+    "authoredBy": {
+        "displayName": "Aviram Leder",
+        "url": "https://spsprodcus3.vssps.visualstudio.com/A99b54a77-7f62-456c-becc-d03225b274b8/_apis/Identities/d43807ad-2bfc-6398-98b4-25905dc555e5",
+        "_links": {
+            "avatar": {
+                "href": "https://dev.azure.com/AviramEzCloud/_apis/GraphProfile/MemberAvatars/aad.ZDQzODA3YWQtMmJmYy03Mzk4LTk4YjQtMjU5MDVkYzU1NWU1"
+            }
+        },
+        "id": "d43807ad-2bfc-6398-98b4-25905dc555e5",
+        "uniqueName": "avleder@microsoft.com",
+        "imageUrl": "https://dev.azure.com/AviramEzCloud/_apis/GraphProfile/MemberAvatars/aad.ZDQzODA3YWQtMmJmYy03Mzk4LTk4YjQtMjU5MDVkYzU1NWU1",
+        "descriptor": "aad.ZDQzODA3YWQtMmJmYy03Mzk4LTk4YjQtMjU5MDVkYzU1NWU1"
+    },
+    "drafts": [],
+    "queue": {
+        "_links": {
+            "self": {
+                "href": "https://dev.azure.com/AviramEzCloud/_apis/build/Queues/6"
+            }
+        },
+        "id": 6,
+        "name": "Hosted Ubuntu 1604",
+        "url": "https://dev.azure.com/AviramEzCloud/_apis/build/Queues/6",
+        "pool": {
+            "id": 6,
+            "name": "Hosted Ubuntu 1604",
+            "isHosted": true
+        }
+    },
+    "id": 1,
+    "name": "EzCloud-CI",
+    "url": "https://dev.azure.com/AviramEzCloud/7f9a3258-c003-4c71-a8a6-5a1e45e7b8b1/_apis/build/Definitions/1?revision=1",
+    "uri": "vstfs:///Build/Definition/1",
+    "path": "\\",
+    "type": 2,
+    "queueStatus": 0,
+    "revision": 1,
+    "createdDate": "2019-07-22T10:05:31.687Z",
+    "project": {
+        "id": "7f9a3258-c003-4c71-a8a6-5a1e45e7b8b1",
+        "name": "EzCloud",
+        "url": "https://dev.azure.com/AviramEzCloud/_apis/projects/7f9a3258-c003-4c71-a8a6-5a1e45e7b8b1",
+        "state": "wellFormed",
+        "revision": 12,
+        "visibility": 0,
+        "lastUpdateTime": "2019-07-22T12:33:46.090Z"
+    }
+}

@@ -21,6 +21,8 @@
     "dotenv": "^8.0.0",
     "inquirer": "^6.5.0",
     "ms-rest": "^2.5.3",
-    "ms-rest-azure": "^3.0.0"
+    "ms-rest-azure": "^3.0.0",
+    "azure-devops-node-api": "^9.0.1",
+    "@types/node": "^12.6.8"
   }
 }
