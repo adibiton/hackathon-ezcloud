@@ -1,7 +1,7 @@
 import * as git from "./git";
 import * as build from "./build";
 
-build.run()
+build.CreateNewBuildDefinition()
     .then(text => {
         console.log(text);
     })

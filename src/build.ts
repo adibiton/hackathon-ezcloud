@@ -4,129 +4,110 @@ import * as vm from "azure-devops-node-api";
 import * as ba from "azure-devops-node-api/BuildApi";
 import * as bi from "azure-devops-node-api/interfaces/BuildInterfaces";
 import * as ci from 'azure-devops-node-api/interfaces/CoreInterfaces';
+import * as corem from 'azure-devops-node-api/CoreApi';
 
 const organizationName = "AviramEzCloud"
 const projectName = "EzCloud"; 
+const registryName = "ezcloud";
+const registryLogin = "d704cfe9-f9ab-4cb8-9802-f1388698aa7c";
+const registryPassword = "750ba20f-db41-412c-ae30-c807e7c9ba4f";
+const repoUrl = "https://github.com/asafst/EzCloud";
+const connectedServiceId = "8025ecf4-04d9-45c6-8645-d0d2875f8858"
+const userGithubToken = "de407c6490af9f36342c2d36c32867695c808cce";
+const userAzureDevOpsToken = "5d2tey3pxz6m4ydlguavlmkcdkpmcuihexabnsbtoisdbbcmigea";
 
-export async function run() {
+const buildDefinitionName = "EzCloud-CI-Automation";
+
+export async function CreateNewBuildDefinition(): Promise<bi.BuildDefinition> {
     try
     {
-        console.log("starting");
-        let vsts: vm.WebApi = await cm.getWebApi(organizationName);
-        let vstsBuild: ba.IBuildApi = await vsts.getBuildApi();
+        let vsts: vm.WebApi = await cm.getWebApi(userAzureDevOpsToken, organizationName);
+        let coreApi: corem.ICoreApi = await vsts.getCoreApi();
+        let taskAgentApi = await vsts.getTaskAgentApi();
+        let buildApi: ba.IBuildApi = await vsts.getBuildApi();
 
-        cm.banner("Build Samples");
-        console.log("project", projectName);
+        let project: ci.TeamProject = await coreApi.getProject(projectName);
+        console.log(`Creating new build definition for project: ${project.name} with id: ${project.id}`);
 
-        // list definitions
-        cm.heading(`Build Definitions for ${projectName}`);
-        let defs: bi.DefinitionReference[] = await vstsBuild.getDefinitions(projectName);
-        
-        console.log(`You have ${defs.length} build definition(s)`);
-
-        // save off last def to create a new definition below
-        let lastDef: bi.BuildDefinition;
-        for (let i: number = 0; i < defs.length; i++) {
-            let defRef: bi.DefinitionReference = defs[i];
-
-            let def: bi.BuildDefinition = await vstsBuild.getDefinition(projectName, defRef.id);
-            lastDef = def;
-            let rep: bi.BuildRepository = def.repository;
-
-            console.log(`${defRef.name} (${defRef.id}) repo ${rep.type}`);
-            console.log(JSON.stringify(def));
+        let queues = await taskAgentApi.getAgentQueues(project.name);
+        let selectedQueue = queues.find(q => q.name.includes('Hosted Ubuntu 1604'));
+        if (selectedQueue === undefined)
+        {
+            console.log('Project needs at least one queue with Hosted Ubuntu 1604 name');
+            return;
         }
 
-        // // get top 10 successfully completed builds since 2016
-        // cm.heading(`top 10 successfully completed builds for ${project} project`);
-        // let builds: bi.Build[] = await vstsBuild.getBuilds(
-        //                 project, 
-        //                 null,                       // definitions: number[] 
-        //                 null,                       // queues: number[]
-        //                 null,                       // buildNumber
-        //                 null, //new Date(2016, 1, 1),       // minFinishTime
-        //                 null,                       // maxFinishTime
-        //                 null,                       // requestedFor: string
-        //                 bi.BuildReason.All,         // reason
-        //                 bi.BuildStatus.Completed,
-        //                 bi.BuildResult.Succeeded,
-        //                 null,                       // tagFilters: string[]
-        //                 null,                        // properties: string[]
-        //                 //bi.DefinitionType.Build,
-        //                 10                          // top: number
-        //                 );
-        
-        // console.log(`${builds.length} builds returned`);
-        // builds.forEach((build: bi.Build) => {
-        //     console.log(build.buildNumber, bi.BuildResult[build.result], "on", build.finishTime.toDateString());
-        // });
-
-        // new definition
-
-        cm.heading(`Creating new build definition`);
         let newDef: bi.BuildDefinition = <bi.BuildDefinition>{};
-        newDef.name = "EzCloud-CI-Automation2";
+
+        let defs = await buildApi.getDefinitions(project.name);
+        let def = defs.find(d => d.name == buildDefinitionName);
+        let isUpdate = false;
+        if (def)
+        {
+            isUpdate = true;
+            newDef = def;
+        }
+
+        
+        let repoName = repoUrl.substring("https://github.com/".length);
+        newDef.name = buildDefinitionName;
         newDef.repository = <bi.BuildRepository>{
             type: "GitHub",
-            name: "asafst/EzCloud",
-            id: "asafst/EzCloud",
-            url: "https://github.com/asafst/EzCloud.git",
-            defaultBranch: "master"
+            name: repoName,
+            id: repoName,
+            url: `${repoUrl}.git`,
+            defaultBranch: "master",
+            properties: {
+                "apiUrl": `https://api.github.com/repos/${repoName}`,
+                "branchesUrl": `https://api.github.com/repos/${repoName}/branches`,
+                "cloneUrl": `https://github.com/${repoName}.git`,
+                 "connectedServiceId": connectedServiceId,
+                "defaultBranch": "master",
+                "fullName": repoName,
+                "manageUrl": `https://github.com/${repoName}`,
+                "refsUrl": `https://api.github.com/repos/${repoName}/git/refs`,
+                "safeRepository": repoName,
+                "shortName": "repoName"
+            }
         };
 
-        newDef.comment = "Trying to create an new definition";
-        newDef.project = <ci.TeamProjectReference>{
-            name: projectName
-        };
-        newDef.queue = lastDef.queue;
+        newDef.comment = "Creating a new definition for EzCloud";
+        newDef.project = project;
+        newDef.queue = selectedQueue;
         newDef.type = 2;
 
-        let process: bi.YamlProcess = {
+        newDef.process = <bi.YamlProcess>{
             type: 2,
-            yamlFilename: "azure-build-pipeline-new.yml"
-        }
-
-        newDef.process = process;
+            yamlFilename: "azure-pipelines.yml"
+        };
 
         newDef.variables = {
             "registryName": <bi.BuildDefinitionVariable>{
-                value: "ezcloud"
+                value: registryName
             },
             "registryLogin": <bi.BuildDefinitionVariable>{
-                value: "d704cfe9-f9ab-4cb8-9802-f1388698aa7c"
+                value: registryLogin
             },
             "registryPassword": <bi.BuildDefinitionVariable>{
-                value: "750ba20f-db41-412c-ae30-c807e7c9ba4f"
+                value: registryPassword
             } 
         }
 
-        console.log("creating");                
-        let createdDef: bi.BuildDefinition = await vstsBuild.createDefinition(newDef, projectName);
-        console.log("created", createdDef.name);
+        if (isUpdate)
+        {
+            let updatedDef: bi.BuildDefinition = await buildApi.updateDefinition(newDef, project.name, def.id);
+            console.log(`Updated definition with name ${updatedDef.name} and id ${updatedDef.id}`);
 
-        // console.log("reading history");
-        // let history = await vstsBuild.getDefinitionRevisions(project, createdDef.id);
-        // console.log(`last updated ${history[0].changedDate}`);
+            return updatedDef;    
+        }
+        else
+        {
+            let createdDef: bi.BuildDefinition = await buildApi.createDefinition(newDef, project.name);
+            console.log(`Created definition with name ${createdDef.name} and id ${createdDef.id}`);
 
-        // let document = [
-        //     {
-        //         op: "replace",
-        //         path: "/key1",
-        //         value: "/value1"
-        //     },
-        //     {
-        //         op: "replace",
-        //         path: "/key2",
-        //         value: "/value2"
-        //     }
-        // ];
+            return createdDef;
+        }
 
-        // console.log("setting properties");
-        // let updatedProperties = await vstsBuild.updateDefinitionProperties(null, document, project, createdDef.id);
-        // console.log(`properties for definition ${createdDef.name}:`);
-        // for (let key in updatedProperties.value) {
-        //     console.log(`${key} = ${updatedProperties.value[key].$value}`);
-        // }
     }
     catch (err) {
         console.error(`Error: ${err.stack}`);

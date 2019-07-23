@@ -10,44 +10,20 @@ function getEnv(name: string): string {
     return val;
 }
 
-export async function getWebApi(organizationName?: string): Promise<vm.WebApi> {
+export async function getWebApi(token: string, organizationName?: string): Promise<vm.WebApi> {
     let serverUrl = `https://dev.azure.com/${organizationName}`; //getEnv("API_URL");
-    return await this.getApi(serverUrl);
+    return await this.getApi(token, serverUrl);
 }
 
-export async function getApi(serverUrl: string): Promise<vm.WebApi> {
+export async function getApi(token: string, serverUrl: string): Promise<vm.WebApi> {
     return new Promise<vm.WebApi>(async (resolve, reject) => {
         try {
-            let token = "grxwoi37yhqsytyalcepbf7foz2kwvklpwjrlmhldvwf6wss3zna"; //getEnv("API_TOKEN");
             let authHandler = vm.getPersonalAccessTokenHandler(token);
             let option = undefined;
 
-            // The following sample is for testing proxy
-            // option = {
-            //     proxy: {
-            //         proxyUrl: "http://127.0.0.1:8888"
-            //         // proxyUsername: "1",
-            //         // proxyPassword: "1",
-            //         // proxyBypassHosts: [
-            //         //     "github\.com"
-            //         // ],
-            //     },
-            //     ignoreSslError: true
-            // };
-
-            // The following sample is for testing cert
-            // option = {
-            //     cert: {
-            //         caFile: "E:\\certutil\\doctest\\ca2.pem",
-            //         certFile: "E:\\certutil\\doctest\\client-cert2.pem",
-            //         keyFile: "E:\\certutil\\doctest\\client-cert-key2.pem",
-            //         passphrase: "test123",
-            //     },
-            // };
-
             let vsts: vm.WebApi = new vm.WebApi(serverUrl, authHandler, option);
             let connData: lim.ConnectionData = await vsts.connect();
-            console.log(`Hello ${connData.authenticatedUser.providerDisplayName}`);
+            console.log(`Running as user: ${connData.authenticatedUser.providerDisplayName}`);
             resolve(vsts);
         }
         catch (err) {
